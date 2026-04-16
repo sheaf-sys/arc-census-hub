@@ -254,7 +254,8 @@ footer { background:var(--white); border-top:1px solid var(--border); padding:12
     <a href="https://calls.arccensus.com" target="_blank" class="nav-item" onclick="trackOpen('calls','Calls Dashboard','📞','https://calls.arccensus.com')"><span class="dot dot-live"></span><span class="nav-item-text">Calls Dashboard</span><span class="nav-kbd">C</span></a>
     <a href="https://qbo-dashboard.onrender.com/census.html" target="_blank" class="nav-item" onclick="trackOpen('census','Census Dashboard','🏥','https://qbo-dashboard.onrender.com/census.html')"><span class="dot dot-live"></span><span class="nav-item-text">Census Dashboard</span><span class="nav-kbd">N</span></a>
     <span class="nav-label">Coming Soon</span>
-    <a href="#" class="nav-item" style="pointer-events:none;opacity:.4"><span class="dot dot-soon"></span><span class="nav-item-text">Labor Management</span></a>
+    <a href="labor.html" class="nav-item" onclick="trackOpen('labor','Labor Management','👥','labor.html')"><span class="dot dot-live"></span><span class="nav-item-text">Labor Management</span><span class="nav-kbd">L</span></a>
+    <span class="nav-label">Coming Soon</span>
     <a href="#" class="nav-item" style="pointer-events:none;opacity:.4"><span class="dot dot-soon"></span><span class="nav-item-text">Monthly Reports</span></a>
   </nav>
   <div class="sidebar-footer">
@@ -284,7 +285,7 @@ footer { background:var(--white); border-top:1px solid var(--border); padding:12
       </div>
     </div>
     <div class="topbar-right">
-      <div class="chip chip-live"><span class="pulse"></span>4 Live</div>
+      <div class="chip chip-live"><span class="pulse"></span>5 Live</div>
       <div class="icon-btn" id="notifBtn" title="Notifications">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="notif-badge" id="notifBadge"></span>
@@ -340,14 +341,14 @@ footer { background:var(--white); border-top:1px solid var(--border); padding:12
 
     <!-- Stats -->
     <div class="stats-row">
-      <div class="stat-card" style="--card-stripe:var(--forest)"><span class="stat-icon">🟢</span><div class="stat-label">Tools Live</div><div class="stat-value accent">4</div><div class="stat-sub">Active & accessible</div></div>
-      <div class="stat-card" style="--card-stripe:var(--gold)"><span class="stat-icon">🔧</span><div class="stat-label">In Development</div><div class="stat-value">2</div><div class="stat-sub">Coming soon</div></div>
+      <div class="stat-card" style="--card-stripe:var(--forest)"><span class="stat-icon">🟢</span><div class="stat-label">Tools Live</div><div class="stat-value accent">5</div><div class="stat-sub">Active & accessible</div></div>
+      <div class="stat-card" style="--card-stripe:var(--gold)"><span class="stat-icon">🔧</span><div class="stat-label">In Development</div><div class="stat-value">1</div><div class="stat-sub">Coming soon</div></div>
       <div class="stat-card" style="--card-stripe:#5b8fa8"><span class="stat-icon">🏥</span><div class="stat-label">Locations</div><div class="stat-value">4</div><div class="stat-sub">Indy · Mooresville · Renewal · Bayside</div></div>
       <div class="stat-card" style="--card-stripe:#7c6a8a"><span class="stat-icon">🌐</span><div class="stat-label">Platform</div><div class="stat-value" style="font-size:19px;font-family:'DM Sans',sans-serif;font-weight:600">arccensus</div><div class="stat-sub">arccensus.com</div></div>
     </div>
 
     <!-- Live Tools -->
-    <div class="section-header"><div class="section-title">Live Tools</div><div class="section-line"></div><div class="section-count">4 active</div></div>
+    <div class="section-header"><div class="section-title">Live Tools</div><div class="section-line"></div><div class="section-count">5 active</div></div>
     <div class="tool-grid">
 
       <a href="https://qbo-dashboard.onrender.com" target="_blank" class="tool-card" style="--accent:#2d6a4f" onclick="trackOpen('finance','Finance Dashboard','💰','https://qbo-dashboard.onrender.com')">
@@ -384,10 +385,19 @@ footer { background:var(--white); border-top:1px solid var(--border); padding:12
 
     </div>
 
+      <a href="labor.html" class="tool-card" style="--accent:#0099ff" onclick="trackOpen('labor','Labor Management','👥','labor.html')">
+        <span class="card-kbd-hint">Press L</span>
+        <div class="card-top"><div class="card-icon">👥</div><div class="badges"><span class="badge badge-live">Live</span></div></div>
+        <div class="card-name">Labor Management</div>
+        <div class="card-desc">Shift scheduling for Mann &amp; Noel units. Drag-and-drop calendar, labor cost tracking, OT alerts, and pay period reconciliation.</div>
+        <div class="card-footer"><div class="card-url">arc-census-hub / labor</div><div class="card-right"><div class="card-cta">Open <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 8.5L8.5 1.5M8.5 1.5H3M8.5 1.5V7"/></svg></div></div></div>
+      </a>
+
+    </div>
+
     <!-- In Development -->
-    <div class="section-header"><div class="section-title">In Development</div><div class="section-line"></div><div class="section-count">2 coming soon</div></div>
+    <div class="section-header"><div class="section-title">In Development</div><div class="section-line"></div><div class="section-count">1 coming soon</div></div>
     <div class="tool-grid">
-      <div class="tool-card coming-soon" style="--accent:#c9956a"><div class="card-top"><div class="card-icon">👥</div><div class="badges"><span class="badge badge-soon">Coming Soon</span></div></div><div class="card-name">Labor Management</div><div class="card-desc">Payroll review, staffing ratios, and labor cost tracking across all facilities. Integrates with payroll platform for real-time visibility and variance alerts.</div><div class="card-footer"><div class="card-url">labor.arccensus.com</div><div class="card-cta" style="color:var(--muted2)">Soon</div></div></div>
       <div class="tool-card coming-soon" style="--accent:#7c6a8a"><div class="card-top"><div class="card-icon">📊</div><div class="badges"><span class="badge badge-soon">Coming Soon</span></div></div><div class="card-name">Monthly Reports</div><div class="card-desc">Automated monthly financial and operational reporting. Consolidated summaries across all entities, delivered on schedule with trend analysis.</div><div class="card-footer"><div class="card-url">reports.arccensus.com</div><div class="card-cta" style="color:var(--muted2)">Soon</div></div></div>
     </div>
 
@@ -432,7 +442,7 @@ const TOOLS = [
   {id:'auditor', name:'Clinical Note Auditor',  desc:'Documentation scrubbing, denial prevention',  icon:'🔍', url:'https://auditor.arccensus.com',                 key:'A', live:true},
   {id:'calls',   name:'Calls Dashboard',        desc:'Call volume, response times, conversions',    icon:'📞', url:'https://calls.arccensus.com',                   key:'C', live:true},
   {id:'census',  name:'Census Dashboard',       desc:'Patient census, LOS, bed utilization',        icon:'🏥', url:'https://qbo-dashboard.onrender.com/census.html', key:'N', live:true},
-  {id:'labor',   name:'Labor Management',       desc:'Payroll, staffing ratios, variance alerts',   icon:'👥', url:null, key:null, live:false},
+  {id:'labor',   name:'Labor Management',       desc:'Shift scheduling, labor cost, OT tracking',   icon:'👥', url:'labor.html', key:'L', live:true},
   {id:'reports', name:'Monthly Reports',        desc:'Automated financial & operational reporting', icon:'📊', url:null, key:null, live:false},
 ];
 

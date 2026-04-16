@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Labor Management — ARC Census</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23162b22'/><text x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='%23c9956a'>✦</text></svg>">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --sidebar-bg:#0f1f18;--sidebar-border:rgba(255,255,255,0.06);--sidebar-txt:#d6cfc5;
+  --gold:#c9956a;--gold-dim:rgba(201,149,106,0.18);--forest:#2d6a4f;--forest-light:rgba(45,106,79,0.12);
+  --bg:#f3f0eb;--white:#faf8f5;--card-bg:#ffffff;
+  --border:rgba(0,0,0,0.08);--border-strong:rgba(0,0,0,0.13);
+  --text:#141414;--text-2:#444;--muted:#7a7166;--muted2:#a89f96;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.06),0 4px 12px rgba(0,0,0,0.06);
+  --shadow-lg:0 4px 16px rgba(0,0,0,0.08),0 24px 64px rgba(0,0,0,0.10);
+  --topbar-bg:rgba(250,248,245,0.92);--sidebar-w:248px;--radius:12px;--topbar-h:62px;
+  --mann:#0099ff;--mann-dim:rgba(0,153,255,0.12);--mann-border:rgba(0,153,255,0.28);
+  --noel:#00e5a0;--noel-dim:rgba(0,229,160,0.12);--noel-border:rgba(0,229,160,0.28);
+  --s-day:#f59e0b;--s-day-bg:rgba(245,158,11,0.13);
+  --s-eve:#a855f7;--s-eve-bg:rgba(168,85,247,0.13);
+  --s-night:#3b82f6;--s-night-bg:rgba(59,130,246,0.13);
+  --s-extday:#f97316;--s-extday-bg:rgba(249,115,22,0.13);
+  --s-extnight:#6366f1;--s-extnight-bg:rgba(99,102,241,0.13);
+}
+[data-theme="dark"]{
+  --bg:#111916;--white:#161f1a;--card-bg:#1a2620;
+  --border:rgba(255,255,255,0.07);--border-strong:rgba(255,255,255,0.11);
+  --text:#e8e2da;--text-2:#b0a99f;--muted:#8a8278;--muted2:#6a6460;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.2),0 4px 12px rgba(0,0,0,0.2);
+  --shadow-lg:0 4px 16px rgba(0,0,0,0.3),0 24px 64px rgba(0,0,0,0.35);
+  --topbar-bg:rgba(22,31,26,0.95);
+}
+html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;-webkit-font-smoothing:antialiased;transition:background .2s,color .2s;}
+.layout{display:flex;min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--sidebar-bg);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;border-right:1px solid var(--sidebar-border);transition:width .22s cubic-bezier(.4,0,.2,1),min-width .22s cubic-bezier(.4,0,.2,1);overflow:hidden;}
+.sidebar.collapsed{width:60px;min-width:60px;}
+.sidebar.collapsed .logo-text,.sidebar.collapsed .nav-label,.sidebar.collapsed .nav-item-text,.sidebar.collapsed .nav-kbd,.sidebar.collapsed .sfoot-text{display:none;}
+.sidebar.collapsed .nav-item{justify-content:center;padding:9px;}
+.sidebar.collapsed .sidebar-logo{justify-content:center;padding:22px 12px;}
+.sidebar.collapsed .sidebar-footer{align-items:center;padding:12px 0;}
+.sidebar.collapsed .user-avatar{margin:0 auto;}
+.sidebar-logo{padding:24px 20px 20px;border-bottom:1px solid var(--sidebar-border);display:flex;align-items:center;gap:11px;flex-shrink:0;}
+.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,#1e3a2f,#0f1f18);border:1px solid rgba(201,149,106,.3);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;cursor:pointer;transition:border-color .15s;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
+.logo-icon:hover{border-color:rgba(201,149,106,.7);}
+.logo-text{display:flex;flex-direction:column;gap:1px;overflow:hidden;}
+.logo-name{font-family:'DM Serif Display',serif;font-size:16px;color:var(--sidebar-txt);white-space:nowrap;}
+.logo-sub{font-size:9px;font-weight:600;color:rgba(214,207,197,.3);letter-spacing:2px;text-transform:uppercase;white-space:nowrap;}
+.sidebar-nav{padding:16px 10px;flex:1;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:2px;}
+.sidebar-nav::-webkit-scrollbar{width:3px;}
+.sidebar-nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:3px;}
+.nav-label{font-size:9px;font-weight:600;color:rgba(214,207,197,.28);letter-spacing:2px;text-transform:uppercase;padding:0 10px;margin:12px 0 4px;display:block;white-space:nowrap;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;width:100%;color:rgba(214,207,197,.48);font-size:12.5px;font-weight:500;cursor:pointer;background:none;border:none;text-align:left;transition:background .15s,color .15s;font-family:inherit;text-decoration:none;position:relative;white-space:nowrap;}
+.nav-item:hover{background:rgba(255,255,255,.05);color:var(--sidebar-txt);}
+.nav-item.active{background:var(--gold-dim);color:var(--gold);}
+.nav-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:2px;background:var(--gold);border-radius:0 2px 2px 0;}
+.nav-item-text{overflow:hidden;text-overflow:ellipsis;flex:1;}
+.nav-kbd{margin-left:auto;font-size:9px;color:rgba(214,207,197,.2);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:1px 5px;font-family:monospace;flex-shrink:0;}
+.dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.dot-live{background:#6fcf97;box-shadow:0 0 5px rgba(111,207,151,.6);}
+.dot-soon{background:rgba(214,207,197,.2);}
+.dot-page{background:var(--gold);opacity:.7;}
+.sidebar-footer{padding:12px 16px;border-top:1px solid var(--sidebar-border);display:flex;flex-direction:column;gap:8px;flex-shrink:0;}
+.user-row{display:flex;align-items:center;gap:9px;}
+.user-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--forest),#1a3d2b);border:1px solid rgba(201,149,106,.3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--gold);flex-shrink:0;cursor:pointer;}
+.user-info{display:flex;flex-direction:column;gap:1px;overflow:hidden;}
+.user-name{font-size:11.5px;font-weight:600;color:rgba(214,207,197,.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-role{font-size:9.5px;color:rgba(214,207,197,.28);}
+.sfoot-text{display:flex;flex-direction:column;gap:4px;}
+.footer-link{font-size:10px;color:rgba(214,207,197,.25);text-decoration:none;}
+.footer-link:hover{color:rgba(214,207,197,.5);}
+
+/* MAIN */
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;transition:margin-left .22s cubic-bezier(.4,0,.2,1);}
+.main.expanded{margin-left:60px;}
+
+/* TOPBAR */
+.topbar{background:var(--topbar-bg);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 28px;height:var(--topbar-h);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;gap:16px;}
+.topbar-left{display:flex;flex-direction:column;gap:2px;flex-shrink:0;}
+.topbar-title{font-family:'DM Serif Display',serif;font-size:18px;color:var(--text);}
+.topbar-sub{font-size:10.5px;color:var(--muted);}
+.topbar-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.icon-btn{width:34px;height:34px;border-radius:8px;border:1px solid var(--border-strong);background:var(--card-bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:15px;transition:background .15s,color .15s;position:relative;flex-shrink:0;}
+.icon-btn:hover{background:var(--bg);color:var(--text);}
+.topbar-time{font-size:11px;color:var(--muted2);white-space:nowrap;}
+.back-link{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);text-decoration:none;padding:5px 10px;border-radius:6px;border:1px solid var(--border-strong);background:var(--card-bg);transition:color .15s,border-color .15s;}
+.back-link:hover{color:var(--text);border-color:var(--border-strong);}
+
+/* LABOR METRICS BAR */
+.labor-bar{background:#0f1f18;border-bottom:1px solid rgba(255,255,255,0.06);padding:0 28px;display:flex;align-items:stretch;gap:0;flex-shrink:0;}
+.lbar-metric{display:flex;flex-direction:column;justify-content:center;padding:13px 28px 13px 0;margin-right:28px;border-right:1px solid rgba(232,224,212,0.08);}
+.lbar-label{font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:rgba(232,224,212,0.55);margin-bottom:4px;}
+.lbar-value{font-family:'DM Serif Display',serif;font-size:24px;color:#f0ebe3;line-height:1;letter-spacing:-0.5px;}
+.lbar-sub{font-size:9.5px;color:rgba(232,224,212,0.4);margin-top:3px;}
+.lbar-right{margin-left:auto;display:flex;align-items:center;gap:12px;flex-shrink:0;padding-left:16px;}
+.lbar-pp{font-size:11px;color:rgba(232,224,212,0.45);}
+.lbar-unit-pill{font-size:10px;font-weight:700;padding:4px 10px;border-radius:100px;letter-spacing:.5px;}
+.lbar-unit-pill.mann{background:rgba(0,153,255,0.15);color:#4db8ff;border:1px solid rgba(0,153,255,0.25);}
+.lbar-unit-pill.noel{background:rgba(0,229,160,0.12);color:#00e5a0;border:1px solid rgba(0,229,160,0.22);}
+
+/* CONTENT */
+.content{padding:18px 28px 40px;flex:1;}
+
+/* CONTROLS */
+.labor-controls{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.seg-ctrl{display:flex;background:var(--card-bg);border:1px solid var(--border-strong);border-radius:8px;padding:3px;gap:2px;}
+.seg-btn{padding:5px 13px;border-radius:5px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--muted);font-family:inherit;transition:background .15s,color .15s;white-space:nowrap;}
+.seg-btn.active{background:var(--forest);color:#fff;}
+.week-nav{display:flex;align-items:center;gap:7px;}
+.week-label{font-size:13px;font-weight:600;color:var(--text);min-width:164px;text-align:center;}
+.nav-arrow{width:28px;height:28px;border-radius:6px;border:1px solid var(--border-strong);background:var(--card-bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);transition:background .15s,color .15s;font-size:13px;}
+.nav-arrow:hover{background:var(--bg);color:var(--text);}
+.unit-ctrl{display:flex;background:var(--card-bg);border:1px solid var(--border-strong);border-radius:8px;padding:3px;gap:2px;margin-left:auto;}
+.unit-btn{padding:5px 13px;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--muted);font-family:inherit;transition:background .15s,color .15s;}
+.unit-btn[data-u="mann"].active{background:var(--mann);color:#fff;}
+.unit-btn[data-u="noel"].active{background:var(--noel);color:#0a1a0f;}
+.unit-btn[data-u="both"].active{background:var(--gold-dim);color:var(--gold);}
+
+/* LABOR LAYOUT */
+.labor-layout{display:grid;grid-template-columns:196px 1fr 268px;gap:14px;align-items:start;}
+
+/* ROSTER */
+.roster-panel{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;position:sticky;top:calc(var(--topbar-h) + 18px);max-height:calc(100vh - var(--topbar-h) - 36px);display:flex;flex-direction:column;}
+.roster-hd{padding:12px 14px 10px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.roster-title{font-family:'DM Serif Display',serif;font-size:13.5px;color:var(--text);}
+.roster-sub{font-size:10px;color:var(--muted2);margin-top:1px;}
+.roster-body{overflow-y:auto;flex:1;}
+.roster-body::-webkit-scrollbar{width:3px;}
+.roster-body::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:3px;}
+.roster-section{padding:8px 10px 6px;}
+.roster-section+.roster-section{border-top:1px solid var(--border);}
+.roster-unit-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 7px;border-radius:4px;margin-bottom:7px;display:inline-block;}
+.roster-section.mann .roster-unit-lbl{color:var(--mann);background:var(--mann-dim);}
+.roster-section.noel .roster-unit-lbl{color:var(--noel);background:var(--noel-dim);}
+.emp-chips{display:flex;flex-direction:column;gap:3px;}
+.emp-chip{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:7px;border:1px solid var(--border-strong);background:var(--bg);cursor:grab;transition:box-shadow .15s,border-color .15s,transform .1s;user-select:none;}
+.emp-chip:hover{box-shadow:var(--shadow-sm);}
+.emp-chip:active{cursor:grabbing;transform:scale(0.97);}
+.emp-chip.dragging{opacity:0.35;}
+.emp-chip.mann-chip{border-left:3px solid var(--mann);}
+.emp-chip.noel-chip{border-left:3px solid var(--noel);}
+.emp-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:700;flex-shrink:0;}
+.mann-chip .emp-av{background:var(--mann-dim);color:var(--mann);}
+.noel-chip .emp-av{background:var(--noel-dim);color:var(--noel);}
+.emp-info{flex:1;min-width:0;}
+.emp-n{font-size:11px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.emp-r{font-size:9px;color:var(--muted2);}
+.emp-hrs-badge{font-size:9.5px;font-weight:700;white-space:nowrap;padding:1px 5px;border-radius:4px;}
+.emp-hrs-badge.normal{color:var(--muted);background:var(--border);}
+.emp-hrs-badge.ot{color:#fff;background:#e05252;}
+.emp-hrs-badge.warn{color:#7a3d00;background:rgba(245,158,11,0.2);}
+
+/* shift legend */
+.roster-legend{padding:10px 14px 12px;border-top:1px solid var(--border);flex-shrink:0;}
+.legend-hd{font-size:9px;font-weight:600;color:var(--muted2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:7px;}
+.legend-row{display:flex;align-items:center;gap:7px;margin-bottom:4px;font-size:10.5px;color:var(--text-2);}
+.legend-swatch{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
+
+/* SCHEDULE PANEL */
+.schedule-panel{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;}
+.schedule-hd{padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.schedule-hd-title{font-family:'DM Serif Display',serif;font-size:13.5px;color:var(--text);}
+.pp-badge{font-size:9.5px;font-weight:600;color:var(--gold);background:var(--gold-dim);border:1px solid rgba(201,149,106,.25);border-radius:4px;padding:3px 8px;white-space:nowrap;}
+
+/* grid */
+.grid-wrap{overflow-x:auto;}
+.sched-table{width:100%;border-collapse:collapse;min-width:560px;}
+.sched-table th{padding:7px 5px;font-size:9.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.9px;border-bottom:1px solid var(--border-strong);background:var(--bg);text-align:center;white-space:nowrap;}
+.sched-table th.shift-col-hd{text-align:left;padding-left:14px;min-width:110px;}
+.day-hd{display:flex;flex-direction:column;align-items:center;gap:0;padding:3px 0;}
+.day-hd-num{font-family:'DM Serif Display',serif;font-size:17px;color:var(--text);line-height:1;}
+.day-hd-name{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;}
+.day-hd.today .day-hd-num{color:var(--forest);}
+.day-hd.today .day-hd-name{color:var(--forest);}
+
+/* unit section row */
+.unit-hdr-row td{background:var(--bg);padding:5px 14px;border-bottom:1px solid var(--border-strong);}
+[data-theme="dark"] .unit-hdr-row td{background:rgba(255,255,255,0.03);}
+.unit-hdr-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;}
+.unit-hdr-lbl.mann{color:var(--mann);}
+.unit-hdr-lbl.noel{color:var(--noel);}
+
+/* shift row */
+.shift-row-lbl{padding:6px 6px 6px 14px;vertical-align:middle;white-space:nowrap;}
+.shift-type-tag{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:5px;}
+.shift-type-tag .stag-dot{width:7px;height:7px;border-radius:2px;flex-shrink:0;}
+.shift-row-lbl .shift-time{font-size:9px;color:var(--muted2);display:block;margin-top:1px;padding-left:2px;}
+
+/* shift cell (drop target) */
+.shift-cell{padding:4px 4px;vertical-align:top;border-left:1px solid var(--border);min-width:86px;min-height:48px;position:relative;transition:background .1s;}
+.shift-cell.drag-over{background:rgba(45,106,79,0.1);outline:2px dashed var(--forest);outline-offset:-2px;border-radius:3px;}
+.cell-chips{display:flex;flex-direction:column;gap:2px;min-height:44px;}
+.cell-hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted2);opacity:0;transition:opacity .15s;pointer-events:none;}
+.shift-cell:hover .cell-hint{opacity:1;}
+
+/* scheduled chip (inside grid) */
+.sched-chip{display:flex;align-items:center;gap:4px;padding:3px 5px 3px 4px;border-radius:5px;font-size:10px;font-weight:600;cursor:pointer;position:relative;transition:filter .15s;}
+.sched-chip:hover{filter:brightness(0.9);}
+.sched-chip .sc-av{width:16px;height:16px;border-radius:50%;font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(255,255,255,0.25);}
+.sched-chip .sc-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60px;}
+.sched-chip .sc-del{width:12px;height:12px;border-radius:50%;background:rgba(0,0,0,0.2);display:flex;align-items:center;justify-content:center;font-size:8px;opacity:0;transition:opacity .1s;flex-shrink:0;line-height:1;}
+.sched-chip:hover .sc-del{opacity:1;}
+.sched-chip .sc-del:hover{background:rgba(224,82,82,0.8);color:#fff;}
+
+/* per shift-type colors */
+.sched-chip.day{background:var(--s-day-bg);color:#92640a;border:1px solid rgba(245,158,11,0.25);}
+[data-theme="dark"] .sched-chip.day{color:#fbbf24;}
+.sched-chip.eve{background:var(--s-eve-bg);color:#7c3aed;border:1px solid rgba(168,85,247,0.25);}
+[data-theme="dark"] .sched-chip.eve{color:#c084fc;}
+.sched-chip.night{background:var(--s-night-bg);color:#1d4ed8;border:1px solid rgba(59,130,246,0.25);}
+[data-theme="dark"] .sched-chip.night{color:#60a5fa;}
+.sched-chip.extday{background:var(--s-extday-bg);color:#c2410c;border:1px solid rgba(249,115,22,0.25);}
+[data-theme="dark"] .sched-chip.extday{color:#fb923c;}
+.sched-chip.extnight{background:var(--s-extnight-bg);color:#4338ca;border:1px solid rgba(99,102,241,0.25);}
+[data-theme="dark"] .sched-chip.extnight{color:#818cf8;}
+
+/* monthly view */
+.month-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:14px;}
+.month-day-hd{text-align:center;font-size:9px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;padding:4px 0;}
+.month-cell{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:6px 7px;min-height:68px;cursor:pointer;transition:border-color .15s;}
+.month-cell:hover{border-color:var(--forest);}
+.month-cell.today{border-color:var(--forest);background:var(--forest-light);}
+.month-cell.other-month{opacity:0.4;}
+.month-day-num{font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.month-cell.today .month-day-num{color:var(--forest);}
+.month-shift-dots{display:flex;flex-wrap:wrap;gap:2px;}
+.month-dot{width:7px;height:7px;border-radius:2px;}
+.month-count{font-size:9px;color:var(--muted2);margin-top:3px;}
+
+/* COST PANEL */
+.cost-panel{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;position:sticky;top:calc(var(--topbar-h) + 18px);max-height:calc(100vh - var(--topbar-h) - 36px);display:flex;flex-direction:column;}
+.cost-hd{padding:12px 14px 10px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.cost-title{font-family:'DM Serif Display',serif;font-size:13.5px;color:var(--text);}
+.cost-sub{font-size:10px;color:var(--muted2);margin-top:1px;}
+.cost-body{overflow-y:auto;flex:1;}
+.cost-body::-webkit-scrollbar{width:3px;}
+.cost-body::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:3px;}
+.cost-unit-sec{padding:8px 10px 4px;}
+.cost-unit-sec+.cost-unit-sec{border-top:1px solid var(--border);}
+.cost-unit-hdr{display:flex;align-items:center;justify-content:space-between;padding:4px 4px 7px;}
+.cost-unit-name{font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;}
+.cost-unit-name.mann{color:var(--mann);}
+.cost-unit-name.noel{color:var(--noel);}
+.cost-unit-hrs{font-size:11px;font-weight:600;color:var(--text);}
+.cost-emp-row{display:flex;align-items:center;gap:4px;padding:5px 6px;border-radius:6px;margin-bottom:1px;}
+.cost-emp-row:hover{background:var(--bg);}
+.cost-emp-n{font-size:11px;color:var(--text-2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cost-emp-hrs{font-size:11px;font-weight:700;min-width:34px;text-align:right;}
+.cost-emp-hrs.ot{color:#e05252;}
+.cost-ot-tag{font-size:8px;font-weight:700;color:#fff;background:#e05252;border-radius:3px;padding:1px 4px;margin-left:2px;}
+.cost-emp-money{font-size:10px;color:var(--muted);min-width:48px;text-align:right;}
+.cost-footer{padding:10px 14px;border-top:1px solid var(--border);flex-shrink:0;}
+.cost-total-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+.cost-total-lbl{font-size:11px;font-weight:600;color:var(--text);}
+.cost-total-val{font-family:'DM Serif Display',serif;font-size:22px;color:var(--text);}
+.cost-note{font-size:9.5px;color:var(--muted2);}
+
+/* section header */
+.section-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.section-title{font-family:'DM Serif Display',serif;font-size:15px;color:var(--text);white-space:nowrap;}
+.section-line{flex:1;height:1px;background:var(--border-strong);}
+
+/* RECONCILIATION */
+.recon-wrap{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);}
+.recon-tbl{width:100%;border-collapse:collapse;}
+.recon-tbl th{padding:9px 14px;font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.9px;color:var(--muted);border-bottom:1px solid var(--border-strong);text-align:left;background:var(--bg);white-space:nowrap;}
+.recon-tbl td{padding:8px 14px;font-size:12px;color:var(--text-2);border-bottom:1px solid var(--border);}
+.recon-tbl tr:last-child td{border-bottom:none;}
+.recon-tbl tr:hover td{background:rgba(0,0,0,.015);}
+[data-theme="dark"] .recon-tbl tr:hover td{background:rgba(255,255,255,.02);}
+.recon-name{font-weight:600;color:var(--text);}
+.unit-pill{font-size:8.5px;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:5px;vertical-align:middle;}
+.unit-pill.mann{background:var(--mann-dim);color:var(--mann);}
+.unit-pill.noel{background:var(--noel-dim);color:var(--noel);}
+.actual-input{background:none;border:1px solid var(--border-strong);border-radius:5px;padding:3px 6px;font-size:12px;color:var(--text);font-family:inherit;width:54px;text-align:center;transition:border-color .15s;}
+.actual-input:focus{outline:none;border-color:var(--forest);}
+.var-pos{color:#e05252;font-weight:600;}
+.var-neg{color:var(--forest);font-weight:600;}
+.var-zero{color:var(--muted2);}
+.recon-ot{font-weight:700;color:#e05252;}
+.recon-cost{font-weight:600;color:var(--text);}
+
+/* SHIFT PICKER */
+.shift-picker{position:fixed;z-index:600;background:var(--white);border:1px solid var(--border-strong);border-radius:10px;box-shadow:var(--shadow-lg);padding:6px;display:none;min-width:170px;}
+.shift-picker.open{display:block;}
+.picker-title{font-size:9px;font-weight:600;color:var(--muted2);text-transform:uppercase;letter-spacing:1.2px;padding:4px 8px 7px;}
+.picker-opt{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:6px;cursor:pointer;transition:background .1s;}
+.picker-opt:hover{background:var(--bg);}
+.picker-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
+.picker-lbl{font-size:12px;font-weight:500;color:var(--text);}
+.picker-time{font-size:10px;color:var(--muted2);}
+.picker-sep{height:1px;background:var(--border);margin:4px 2px;}
+.picker-del{color:#e05252 !important;}
+
+/* FOOTER */
+footer{background:var(--white);border-top:1px solid var(--border);padding:12px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.footer-left{font-size:11px;color:var(--muted);}
+.footer-right{display:flex;align-items:center;gap:12px;}
+.footer-date{font-size:11px;color:var(--muted2);}
+
+@media(max-width:1200px){.labor-layout{grid-template-columns:180px 1fr 240px;}}
+@media(max-width:1024px){.sidebar{display:none;}.main{margin-left:0!important;}.labor-layout{grid-template-columns:1fr;}.cost-panel,.roster-panel{position:static;max-height:none;}}
+@media(max-width:640px){.content{padding:14px 14px 32px;}.topbar{padding:0 14px;}}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon" id="collapseBtn" title="Toggle sidebar">✦</div>
+    <div class="logo-text">
+      <div class="logo-name">ARC Census</div>
+      <div class="logo-sub">Internal Platform</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <span class="nav-label">Platform</span>
+    <a href="index.html" class="nav-item"><span class="dot dot-page"></span><span class="nav-item-text">All Tools</span></a>
+    <span class="nav-label">Live Tools</span>
+    <a href="https://qbo-dashboard.onrender.com" target="_blank" class="nav-item"><span class="dot dot-live"></span><span class="nav-item-text">Finance Dashboard</span><span class="nav-kbd">F</span></a>
+    <a href="https://auditor.arccensus.com" target="_blank" class="nav-item"><span class="dot dot-live"></span><span class="nav-item-text">Clinical Note Auditor</span><span class="nav-kbd">A</span></a>
+    <a href="https://calls.arccensus.com" target="_blank" class="nav-item"><span class="dot dot-live"></span><span class="nav-item-text">Calls Dashboard</span><span class="nav-kbd">C</span></a>
+    <a href="https://qbo-dashboard.onrender.com/census.html" target="_blank" class="nav-item"><span class="dot dot-live"></span><span class="nav-item-text">Census Dashboard</span><span class="nav-kbd">N</span></a>
+    <a href="labor.html" class="nav-item active"><span class="dot dot-live"></span><span class="nav-item-text">Labor Management</span><span class="nav-kbd">L</span></a>
+    <span class="nav-label">Coming Soon</span>
+    <a href="#" class="nav-item" style="pointer-events:none;opacity:.4"><span class="dot dot-soon"></span><span class="nav-item-text">Monthly Reports</span></a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-row">
+      <div class="user-avatar">SF</div>
+      <div class="user-info sfoot-text">
+        <div class="user-name">Shea F.</div>
+        <div class="user-role">Platform Admin</div>
+      </div>
+    </div>
+    <div class="sfoot-text"><a href="mailto:support@addictionrehabcenters.com" class="footer-link">Contact Support</a></div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main" id="mainContent">
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">Labor Management</div>
+      <div class="topbar-sub">Mann &amp; Noel Units — Scheduling &amp; Cost Tracking</div>
+    </div>
+    <div class="topbar-right">
+      <a href="index.html" class="back-link">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7.5 1.5L3 6l4.5 4.5"/></svg>
+        Hub
+      </a>
+      <div class="icon-btn" id="darkToggle" title="Toggle dark mode">
+        <svg id="darkIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </div>
+      <div class="topbar-time" id="clock">—</div>
+    </div>
+  </header>
+
+  <!-- Labor Metrics Bar -->
+  <div class="labor-bar">
+    <div class="lbar-metric">
+      <div class="lbar-label">Scheduled Hours</div>
+      <div class="lbar-value" id="lb-total-hrs">—</div>
+      <div class="lbar-sub">This pay period</div>
+    </div>
+    <div class="lbar-metric">
+      <div class="lbar-label">Est. Labor Cost</div>
+      <div class="lbar-value" id="lb-cost">—</div>
+      <div class="lbar-sub">Based on scheduled hrs</div>
+    </div>
+    <div class="lbar-metric">
+      <div class="lbar-label">OT Watch</div>
+      <div class="lbar-value" id="lb-ot">—</div>
+      <div class="lbar-sub">Employees ≥ 36 hrs</div>
+    </div>
+    <div class="lbar-metric" style="border-right:none;margin-right:0;">
+      <div class="lbar-label">Staff Scheduled</div>
+      <div class="lbar-value" id="lb-staff">—</div>
+      <div class="lbar-sub">Unique employees working</div>
+    </div>
+    <div class="lbar-right">
+      <span class="lbar-unit-pill mann">MANN</span>
+      <span class="lbar-unit-pill noel">NOEL</span>
+      <span class="lbar-pp" id="lb-pp-label">—</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Controls -->
+    <div class="labor-controls">
+      <div class="seg-ctrl">
+        <button class="seg-btn" data-view="week">Weekly</button>
+        <button class="seg-btn active" data-view="payperiod">Pay Period</button>
+        <button class="seg-btn" data-view="month">Monthly</button>
+      </div>
+      <div class="week-nav">
+        <div class="nav-arrow" id="prevWeek">&#8592;</div>
+        <div class="week-label" id="weekLabel">—</div>
+        <div class="nav-arrow" id="nextWeek">&#8594;</div>
+      </div>
+      <div class="unit-ctrl">
+        <button class="unit-btn" data-u="mann">MANN</button>
+        <button class="unit-btn active" data-u="both">BOTH</button>
+        <button class="unit-btn" data-u="noel">NOEL</button>
+      </div>
+    </div>
+
+    <!-- Labor Layout -->
+    <div class="labor-layout">
+
+      <!-- ROSTER -->
+      <div class="roster-panel">
+        <div class="roster-hd">
+          <div class="roster-title">Employee Roster</div>
+          <div class="roster-sub">Drag to schedule</div>
+        </div>
+        <div class="roster-body" id="rosterBody"></div>
+        <div class="roster-legend">
+          <div class="legend-hd">Shift Types</div>
+          <div class="legend-row"><div class="legend-swatch" style="background:var(--s-day)"></div>Day · 7a–3p · 8h</div>
+          <div class="legend-row"><div class="legend-swatch" style="background:var(--s-eve)"></div>Evening · 3p–11p · 8h</div>
+          <div class="legend-row"><div class="legend-swatch" style="background:var(--s-night)"></div>Night · 11p–7a · 8h</div>
+          <div class="legend-row"><div class="legend-swatch" style="background:var(--s-extday)"></div>Ext Day · 8a–8p · 12h</div>
+          <div class="legend-row"><div class="legend-swatch" style="background:var(--s-extnight)"></div>Ext Night · 8p–8a · 12h</div>
+        </div>
+      </div>
+
+      <!-- SCHEDULE GRID -->
+      <div class="schedule-panel">
+        <div class="schedule-hd">
+          <div class="schedule-hd-title" id="schedHdTitle">Schedule</div>
+          <div class="pp-badge" id="ppBadge">—</div>
+        </div>
+        <div id="scheduleContent"></div>
+      </div>
+
+      <!-- COST PANEL -->
+      <div class="cost-panel">
+        <div class="cost-hd">
+          <div class="cost-title">Labor Cost</div>
+          <div class="cost-sub">Estimated · based on scheduled shifts</div>
+        </div>
+        <div class="cost-body" id="costBody"></div>
+        <div class="cost-footer">
+          <div class="cost-total-row">
+            <div class="cost-total-lbl">Period Total</div>
+            <div class="cost-total-val" id="costTotal">$0</div>
+          </div>
+          <div class="cost-note">* Estimates only. Does not include taxes, benefits, or OT premiums.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Reconciliation -->
+    <div style="margin-top:24px;">
+      <div class="section-header">
+        <div class="section-title">Pay Period Reconciliation</div>
+        <div class="section-line"></div>
+      </div>
+      <div class="recon-wrap">
+        <table class="recon-tbl">
+          <thead>
+            <tr>
+              <th>Employee</th>
+              <th>Unit</th>
+              <th>Sched Hrs</th>
+              <th>Actual Hrs</th>
+              <th>Variance</th>
+              <th>OT Hrs</th>
+              <th>Est. Cost</th>
+            </tr>
+          </thead>
+          <tbody id="reconBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <div class="footer-left">ARC Census — Labor Management · Mann &amp; Noel Units</div>
+    <div class="footer-right"><span class="footer-date" id="footerDate">—</span></div>
+  </footer>
+</div>
+</div>
+
+<!-- SHIFT PICKER -->
+<div class="shift-picker" id="shiftPicker">
+  <div class="picker-title">Assign Shift</div>
+  <div class="picker-opt" data-shift="day"><div class="picker-dot" style="background:var(--s-day)"></div><span class="picker-lbl">Day</span><span class="picker-time">7a–3p · 8h</span></div>
+  <div class="picker-opt" data-shift="eve"><div class="picker-dot" style="background:var(--s-eve)"></div><span class="picker-lbl">Evening</span><span class="picker-time">3p–11p · 8h</span></div>
+  <div class="picker-opt" data-shift="night"><div class="picker-dot" style="background:var(--s-night)"></div><span class="picker-lbl">Night</span><span class="picker-time">11p–7a · 8h</span></div>
+  <div class="picker-opt" data-shift="extday"><div class="picker-dot" style="background:var(--s-extday)"></div><span class="picker-lbl">Ext Day</span><span class="picker-time">8a–8p · 12h</span></div>
+  <div class="picker-opt" data-shift="extnight"><div class="picker-dot" style="background:var(--s-extnight)"></div><span class="picker-lbl">Ext Night</span><span class="picker-time">8p–8a · 12h</span></div>
+  <div class="picker-sep"></div>
+  <div class="picker-opt picker-del" data-shift="__remove"><div class="picker-dot" style="background:#e05252"></div><span class="picker-lbl picker-del">Remove shift</span></div>
+</div>
+
+<script>
+// ─── EMPLOYEES ───────────────────────────────────────────────────────────────
+// UPDATE: Replace names, roles, and rates with actual employee data
+const EMPLOYEES = {
+  mann: [
+    {id:'mann-1', name:'Employee 1', initials:'E1', role:'BHT',  rate:18},
+    {id:'mann-2', name:'Employee 2', initials:'E2', role:'RN',   rate:28},
+    {id:'mann-3', name:'Employee 3', initials:'E3', role:'BHT',  rate:18},
+    {id:'mann-4', name:'Employee 4', initials:'E4', role:'MHT',  rate:16},
+    {id:'mann-5', name:'Employee 5', initials:'E5', role:'BHT',  rate:18},
+    {id:'mann-6', name:'Employee 6', initials:'E6', role:'LPN',  rate:22},
+  ],
+  noel: [
+    {id:'noel-1', name:'Employee 1', initials:'E1', role:'BHT',  rate:18},
+    {id:'noel-2', name:'Employee 2', initials:'E2', role:'RN',   rate:28},
+    {id:'noel-3', name:'Employee 3', initials:'E3', role:'MHT',  rate:16},
+    {id:'noel-4', name:'Employee 4', initials:'E4', role:'BHT',  rate:18},
+    {id:'noel-5', name:'Employee 5', initials:'E5', role:'BHT',  rate:18},
+    {id:'noel-6', name:'Employee 6', initials:'E6', role:'LPN',  rate:22},
+  ]
+};
+
+// ─── SHIFT DEFINITIONS ───────────────────────────────────────────────────────
+const SHIFTS = {
+  day:      {label:'Day',      time:'7a–3p',   hours:8,  color:'var(--s-day)',     bg:'var(--s-day-bg)'},
+  eve:      {label:'Evening',  time:'3p–11p',  hours:8,  color:'var(--s-eve)',     bg:'var(--s-eve-bg)'},
+  night:    {label:'Night',    time:'11p–7a',  hours:8,  color:'var(--s-night)',   bg:'var(--s-night-bg)'},
+  extday:   {label:'Ext Day',  time:'8a–8p',   hours:12, color:'var(--s-extday)', bg:'var(--s-extday-bg)'},
+  extnight: {label:'Ext Night',time:'8p–8a',   hours:12, color:'var(--s-extnight)',bg:'var(--s-extnight-bg)'},
+};
+const SHIFT_KEYS = ['day','eve','night','extday','extnight'];
+const OT_THRESHOLD = 40;
+
+// ─── PRELOADED SCHEDULE DATA ─────────────────────────────────────────────────
+// FORMAT: PRELOAD['YYYY-MM-DD']['unit-shiftkey'] = ['emp-id', 'emp-id', ...]
+// Units: 'mann', 'noel'  |  Shifts: 'day','eve','night','extday','extnight'
+// Example: PRELOAD['2026-04-09']['mann-day'] = ['mann-1','mann-3']
+// These dates cover pay periods: Apr 9–15 and Apr 16–22
+const PRELOAD = {
+  '2026-04-09':{}, '2026-04-10':{}, '2026-04-11':{},
+  '2026-04-12':{}, '2026-04-13':{}, '2026-04-14':{}, '2026-04-15':{},
+  '2026-04-16':{}, '2026-04-17':{}, '2026-04-18':{},
+  '2026-04-19':{}, '2026-04-20':{}, '2026-04-21':{}, '2026-04-22':{},
+};
+// ─── END PRELOADED DATA ──────────────────────────────────────────────────────
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let VIEW = 'payperiod'; // 'week' | 'payperiod' | 'month'
+let UNIT = 'both';      // 'mann' | 'noel' | 'both'
+let WEEK_START = getPayPeriodStart(new Date('2026-04-16'));
+
+// Schedule: { 'YYYY-MM-DD': { 'mann-day': ['mann-1',...], 'noel-night': [...], ... } }
+let SCHEDULE = loadSchedule();
+
+// Picker state
+let pickerContext = null; // {dateStr, unit, shiftKey, empId}
+let dragEmpId = null;
+
+// ─── PERSISTENCE ─────────────────────────────────────────────────────────────
+function loadSchedule() {
+  try {
+    const stored = JSON.parse(localStorage.getItem('arc-labor-v1') || 'null');
+    if (stored) return stored;
+  } catch(e) {}
+  // First load: seed from PRELOAD
+  const s = {};
+  Object.keys(PRELOAD).forEach(d => { s[d] = Object.assign({}, PRELOAD[d]); });
+  return s;
+}
+function saveSchedule() {
+  localStorage.setItem('arc-labor-v1', JSON.stringify(SCHEDULE));
+}
+function ensureDate(d) {
+  if (!SCHEDULE[d]) SCHEDULE[d] = {};
+}
+function getCellKey(unit, shiftKey) { return unit + '-' + shiftKey; }
+function getCellEmps(dateStr, unit, shiftKey) {
+  ensureDate(dateStr);
+  const k = getCellKey(unit, shiftKey);
+  if (!SCHEDULE[dateStr][k]) SCHEDULE[dateStr][k] = [];
+  return SCHEDULE[dateStr][k];
+}
+
+// ─── DATE HELPERS ─────────────────────────────────────────────────────────────
+function dateStr(d) {
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function addDays(d, n) {
+  const r = new Date(d); r.setDate(r.getDate() + n); return r;
+}
+function getPayPeriodStart(d) {
+  // Pay period starts Thursday
+  const day = d.getDay(); // 0=Sun,4=Thu
+  const diff = (day - 4 + 7) % 7;
+  const r = new Date(d);
+  r.setDate(r.getDate() - diff);
+  r.setHours(0,0,0,0);
+  return r;
+}
+function getWeekStart(d) {
+  // Standard week starts Monday
+  const day = d.getDay();
+  const diff = (day - 1 + 7) % 7;
+  const r = new Date(d);
+  r.setDate(r.getDate() - diff);
+  r.setHours(0,0,0,0);
+  return r;
+}
+function getMonthStart(d) {
+  return new Date(d.getFullYear(), d.getMonth(), 1);
+}
+function getWeekDates(start) {
+  return Array.from({length:7}, (_,i) => addDays(start, i));
+}
+const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+function fmtDate(d) {
+  return DAY_NAMES[d.getDay()]+' '+MONTH_NAMES[d.getMonth()]+' '+d.getDate();
+}
+function fmtShort(d) {
+  return MONTH_NAMES[d.getMonth()].slice(0,3)+' '+d.getDate();
+}
+
+// ─── EMPLOYEE LOOKUP ─────────────────────────────────────────────────────────
+const EMP_MAP = {};
+[...EMPLOYEES.mann, ...EMPLOYEES.noel].forEach(e => { EMP_MAP[e.id] = e; });
+function empUnit(id) { return id.startsWith('mann') ? 'mann' : 'noel'; }
+
+// ─── HOURS CALC ───────────────────────────────────────────────────────────────
+function getEmpHrsInPeriod(empId, dates) {
+  let hrs = 0;
+  dates.forEach(d => {
+    const ds = dateStr(d);
+    const unit = empUnit(empId);
+    SHIFT_KEYS.forEach(sk => {
+      const emps = getCellEmps(ds, unit, sk);
+      if (emps.includes(empId)) hrs += SHIFTS[sk].hours;
+    });
+  });
+  return hrs;
+}
+function getUnitHrs(unit, dates) {
+  let hrs = 0;
+  const emps = EMPLOYEES[unit];
+  emps.forEach(e => { hrs += getEmpHrsInPeriod(e.id, dates); });
+  return hrs;
+}
+function getUnitCost(unit, dates) {
+  let cost = 0;
+  EMPLOYEES[unit].forEach(e => {
+    const hrs = getEmpHrsInPeriod(e.id, dates);
+    const otHrs = Math.max(0, hrs - OT_THRESHOLD);
+    const regHrs = hrs - otHrs;
+    cost += regHrs * e.rate + otHrs * e.rate * 1.5;
+  });
+  return cost;
+}
+function getStaffWorking(dates) {
+  const set = new Set();
+  dates.forEach(d => {
+    const ds = dateStr(d);
+    ['mann','noel'].forEach(unit => {
+      SHIFT_KEYS.forEach(sk => {
+        getCellEmps(ds, unit, sk).forEach(id => set.add(id));
+      });
+    });
+  });
+  return set.size;
+}
+
+// ─── CURRENT PERIOD DATES ─────────────────────────────────────────────────────
+function getCurrentDates() {
+  if (VIEW === 'month') {
+    const ms = getMonthStart(WEEK_START);
+    const dates = [];
+    const m = ms.getMonth();
+    let d = new Date(ms);
+    while (d.getMonth() === m) { dates.push(new Date(d)); d.setDate(d.getDate()+1); }
+    return dates;
+  }
+  return getWeekDates(WEEK_START);
+}
+
+// ─── LABEL ───────────────────────────────────────────────────────────────────
+function getWeekLabel() {
+  if (VIEW === 'month') {
+    return MONTH_NAMES[WEEK_START.getMonth()] + ' ' + WEEK_START.getFullYear();
+  }
+  const dates = getWeekDates(WEEK_START);
+  const s = dates[0], e = dates[6];
+  if (s.getMonth() === e.getMonth())
+    return MONTH_NAMES[s.getMonth()]+' '+s.getDate()+'–'+e.getDate();
+  return fmtShort(s)+' – '+fmtShort(e);
+}
+function getPPLabel() {
+  const dates = getWeekDates(WEEK_START);
+  return 'Pay Period: '+fmtShort(dates[0])+' – '+fmtShort(dates[6]);
+}
+
+// ─── RENDER ALL ───────────────────────────────────────────────────────────────
+function renderAll() {
+  const dates = getCurrentDates();
+  updateWeekLabel();
+  renderRoster(dates);
+  if (VIEW === 'month') renderMonthView();
+  else renderWeekGrid(dates);
+  renderCostPanel(dates);
+  renderRecon(dates);
+  updateMetricsBar(dates);
+}
+
+function updateWeekLabel() {
+  document.getElementById('weekLabel').textContent = getWeekLabel();
+  const dates = getWeekDates(WEEK_START);
+  document.getElementById('ppBadge').textContent = getPPLabel();
+  document.getElementById('schedHdTitle').textContent =
+    VIEW === 'month' ? MONTH_NAMES[WEEK_START.getMonth()]+' '+WEEK_START.getFullYear() :
+    VIEW === 'payperiod' ? 'Pay Period Schedule' : 'Weekly Schedule';
+}
+
+function updateMetricsBar(dates) {
+  const allUnits = UNIT === 'both' ? ['mann','noel'] : [UNIT];
+  let totalHrs = 0, totalCost = 0, otCount = 0;
+  allUnits.forEach(u => {
+    totalHrs += getUnitHrs(u, dates);
+    totalCost += getUnitCost(u, dates);
+    EMPLOYEES[u].forEach(e => {
+      const hrs = getEmpHrsInPeriod(e.id, dates);
+      if (hrs >= 36) otCount++;
+    });
+  });
+  document.getElementById('lb-total-hrs').textContent = totalHrs;
+  document.getElementById('lb-cost').textContent = '$'+Math.round(totalCost).toLocaleString();
+  document.getElementById('lb-ot').textContent = otCount;
+  document.getElementById('lb-staff').textContent = getStaffWorking(dates);
+  document.getElementById('lb-pp-label').textContent = getPPLabel();
+}
+
+// ─── ROSTER ──────────────────────────────────────────────────────────────────
+function renderRoster(dates) {
+  const units = UNIT === 'both' ? ['mann','noel'] : [UNIT];
+  let html = '';
+  units.forEach(u => {
+    html += `<div class="roster-section ${u}"><div class="roster-unit-lbl">${u.toUpperCase()}</div><div class="emp-chips">`;
+    EMPLOYEES[u].forEach(e => {
+      const hrs = getEmpHrsInPeriod(e.id, dates);
+      const cls = hrs >= OT_THRESHOLD ? 'ot' : hrs >= 36 ? 'warn' : 'normal';
+      const badge = hrs > 0 ? `<span class="emp-hrs-badge ${cls}">${hrs}h</span>` : '';
+      html += `<div class="emp-chip ${u}-chip" draggable="true" data-empid="${e.id}" title="${e.name} · ${e.role} · $${e.rate}/hr">
+        <div class="emp-av">${e.initials}</div>
+        <div class="emp-info"><div class="emp-n">${e.name}</div><div class="emp-r">${e.role}</div></div>
+        ${badge}
+      </div>`;
+    });
+    html += '</div></div>';
+  });
+  document.getElementById('rosterBody').innerHTML = html;
+
+  // Bind drag events
+  document.querySelectorAll('.emp-chip[draggable]').forEach(chip => {
+    chip.addEventListener('dragstart', e => {
+      dragEmpId = chip.dataset.empid;
+      chip.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'copy';
+      e.dataTransfer.setData('text/plain', dragEmpId);
+    });
+    chip.addEventListener('dragend', () => {
+      chip.classList.remove('dragging');
+      dragEmpId = null;
+    });
+  });
+}
+
+// ─── WEEK/PAY PERIOD GRID ────────────────────────────────────────────────────
+function renderWeekGrid(dates) {
+  const today = dateStr(new Date());
+  const units = UNIT === 'both' ? ['mann','noel'] : [UNIT];
+
+  let hdr = '<tr class="grid-head"><th class="shift-col-hd">Shift</th>';
+  dates.forEach(d => {
+    const ds = dateStr(d);
+    const isToday = ds === today;
+    hdr += `<th class="day-col"><div class="day-hd${isToday?' today':''}">
+      <div class="day-hd-num">${d.getDate()}</div>
+      <div class="day-hd-name">${DAY_NAMES[d.getDay()]}</div>
+    </div></th>`;
+  });
+  hdr += '</tr>';
+
+  let rows = '';
+  units.forEach(u => {
+    rows += `<tr class="unit-hdr-row"><td colspan="${dates.length+1}"><span class="unit-hdr-lbl ${u}">${u.toUpperCase()} UNIT</span></td></tr>`;
+    SHIFT_KEYS.forEach(sk => {
+      const sh = SHIFTS[sk];
+      rows += `<tr><td class="shift-row-lbl">
+        <div class="shift-type-tag" style="background:${sh.bg};color:${sh.color}">
+          <div class="stag-dot" style="background:${sh.color}"></div>${sh.label}
+        </div>
+        <span class="shift-time">${sh.time} · ${sh.hours}h</span>
+      </td>`;
+      dates.forEach(d => {
+        const ds = dateStr(d);
+        const emps = getCellEmps(ds, u, sk);
+        const hasShifts = emps.length > 0;
+        rows += `<td class="shift-cell${hasShifts?' has-shifts':''}" data-date="${ds}" data-unit="${u}" data-shift="${sk}">
+          <div class="cell-chips">${emps.map(eid => renderSchedChip(eid, sk)).join('')}</div>
+          <div class="cell-hint">+ drop here</div>
+        </td>`;
+      });
+      rows += '</tr>';
+    });
+  });
+
+  document.getElementById('scheduleContent').innerHTML =
+    `<div class="grid-wrap"><table class="sched-table"><thead>${hdr}</thead><tbody>${rows}</tbody></table></div>`;
+
+  bindGridEvents();
+}
+
+function renderSchedChip(empId, shiftKey) {
+  const e = EMP_MAP[empId];
+  if (!e) return '';
+  return `<div class="sched-chip ${shiftKey}" data-empid="${empId}" data-shift="${shiftKey}">
+    <div class="sc-av">${e.initials}</div>
+    <span class="sc-name">${e.name.split(' ')[0]}</span>
+    <span class="sc-del" title="Remove">×</span>
+  </div>`;
+}
+
+function bindGridEvents() {
+  // Drop targets
+  document.querySelectorAll('.shift-cell').forEach(cell => {
+    cell.addEventListener('dragover', e => {
+      if (!dragEmpId) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+      cell.classList.add('drag-over');
+    });
+    cell.addEventListener('dragleave', () => cell.classList.remove('drag-over'));
+    cell.addEventListener('drop', e => {
+      e.preventDefault();
+      cell.classList.remove('drag-over');
+      const empId = dragEmpId || e.dataTransfer.getData('text/plain');
+      if (!empId) return;
+      const {date, unit, shift} = cell.dataset;
+      // Validate: employee must belong to this unit
+      if (empUnit(empId) !== unit) {
+        showToast('Employee belongs to ' + empUnit(empId).toUpperCase() + ' unit');
+        return;
+      }
+      const emps = getCellEmps(date, unit, shift);
+      if (!emps.includes(empId)) {
+        emps.push(empId);
+        saveSchedule();
+        renderAll();
+      }
+    });
+  });
+
+  // Delete chip
+  document.querySelectorAll('.sc-del').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const chip = btn.closest('.sched-chip');
+      const cell = btn.closest('.shift-cell');
+      const empId = chip.dataset.empid;
+      const {date, unit, shift} = cell.dataset;
+      const arr = getCellEmps(date, unit, shift);
+      const idx = arr.indexOf(empId);
+      if (idx > -1) { arr.splice(idx, 1); saveSchedule(); renderAll(); }
+    });
+  });
+
+  // Click chip → shift picker (to change assignment)
+  document.querySelectorAll('.sched-chip').forEach(chip => {
+    chip.addEventListener('click', e => {
+      if (e.target.classList.contains('sc-del')) return;
+      const cell = chip.closest('.shift-cell');
+      const {date, unit, shift} = cell.dataset;
+      showPicker(e.clientX, e.clientY, {dateStr:date, unit, shiftKey:shift, empId:chip.dataset.empid, mode:'change'});
+    });
+  });
+}
+
+// ─── MONTHLY VIEW ─────────────────────────────────────────────────────────────
+function renderMonthView() {
+  const today = dateStr(new Date());
+  const ms = getMonthStart(WEEK_START);
+  const me = new Date(ms.getFullYear(), ms.getMonth()+1, 0);
+  const units = UNIT === 'both' ? ['mann','noel'] : [UNIT];
+
+  // Build calendar: start from Monday before month start
+  const startDay = ms.getDay() === 0 ? 6 : ms.getDay()-1; // Mon-based
+  const gridStart = addDays(ms, -startDay);
+
+  let html = '<div class="month-grid">';
+  ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(n => {
+    html += `<div class="month-day-hd">${n}</div>`;
+  });
+
+  const totalCells = 35;
+  for (let i = 0; i < totalCells; i++) {
+    const d = addDays(gridStart, i);
+    const ds = dateStr(d);
+    const isToday = ds === today;
+    const otherMonth = d.getMonth() !== ms.getMonth();
+    let dots = '';
+    let total = 0;
+    units.forEach(u => {
+      SHIFT_KEYS.forEach(sk => {
+        const emps = getCellEmps(ds, u, sk);
+        if (emps.length) {
+          dots += `<div class="month-dot" style="background:${SHIFTS[sk].color}" title="${SHIFTS[sk].label}: ${emps.length}"></div>`;
+          total += emps.length;
+        }
+      });
+    });
+    html += `<div class="month-cell${isToday?' today':''}${otherMonth?' other-month':''}">
+      <div class="month-day-num">${d.getDate()}</div>
+      <div class="month-shift-dots">${dots}</div>
+      ${total ? `<div class="month-count">${total} shift${total!==1?'s':''}</div>` : ''}
+    </div>`;
+  }
+  html += '</div>';
+  document.getElementById('scheduleContent').innerHTML = html;
+}
+
+// ─── COST PANEL ───────────────────────────────────────────────────────────────
+function renderCostPanel(dates) {
+  const units = UNIT === 'both' ? ['mann','noel'] : [UNIT];
+  let html = '';
+  let grandTotal = 0;
+
+  units.forEach(u => {
+    let unitHrs = 0, unitCost = 0;
+    let rows = '';
+    EMPLOYEES[u].forEach(e => {
+      const hrs = getEmpHrsInPeriod(e.id, dates);
+      if (hrs === 0) return;
+      const otHrs = Math.max(0, hrs - OT_THRESHOLD);
+      const regHrs = hrs - otHrs;
+      const cost = regHrs * e.rate + otHrs * e.rate * 1.5;
+      unitHrs += hrs; unitCost += cost;
+      const otTag = otHrs > 0 ? `<span class="cost-ot-tag">+${otHrs}h OT</span>` : '';
+      rows += `<div class="cost-emp-row">
+        <div class="cost-emp-n">${e.name}</div>
+        <div class="cost-emp-hrs${hrs>=OT_THRESHOLD?' ot':''}">${hrs}h${otTag}</div>
+        <div class="cost-emp-money">$${Math.round(cost).toLocaleString()}</div>
+      </div>`;
+    });
+    grandTotal += unitCost;
+    html += `<div class="cost-unit-sec">
+      <div class="cost-unit-hdr">
+        <div class="cost-unit-name ${u}">${u.toUpperCase()}</div>
+        <div class="cost-unit-hrs">${unitHrs}h · $${Math.round(unitCost).toLocaleString()}</div>
+      </div>
+      ${rows || '<div style="font-size:11px;color:var(--muted2);padding:4px 6px;">No shifts scheduled</div>'}
+    </div>`;
+  });
+
+  document.getElementById('costBody').innerHTML = html || '<div style="padding:16px;font-size:12px;color:var(--muted2)">No shifts scheduled this period</div>';
+  document.getElementById('costTotal').textContent = '$'+Math.round(grandTotal).toLocaleString();
+}
+
+// ─── RECONCILIATION ───────────────────────────────────────────────────────────
+function renderRecon(dates) {
+  const units = UNIT === 'both' ? ['mann','noel'] : [UNIT];
+  let rows = '';
+  units.forEach(u => {
+    EMPLOYEES[u].forEach(e => {
+      const schedHrs = getEmpHrsInPeriod(e.id, dates);
+      const key = 'actual-'+e.id;
+      const stored = localStorage.getItem(key);
+      const actualHrs = stored !== null ? parseFloat(stored) : schedHrs;
+      const variance = actualHrs - schedHrs;
+      const otHrs = Math.max(0, actualHrs - OT_THRESHOLD);
+      const cost = Math.min(actualHrs, OT_THRESHOLD)*e.rate + otHrs*e.rate*1.5;
+      const varCls = variance > 0 ? 'var-pos' : variance < 0 ? 'var-neg' : 'var-zero';
+      const varStr = variance === 0 ? '—' : (variance > 0 ? '+' : '')+variance+'h';
+      rows += `<tr>
+        <td><span class="recon-name">${e.name}</span></td>
+        <td><span class="unit-pill ${u}">${u.toUpperCase()}</span></td>
+        <td>${schedHrs}h</td>
+        <td><input class="actual-input" type="number" min="0" max="84" step="0.5" value="${actualHrs}" data-empid="${e.id}"></td>
+        <td><span class="${varCls}">${varStr}</span></td>
+        <td>${otHrs > 0 ? `<span class="recon-ot">+${otHrs}h</span>` : '—'}</td>
+        <td><span class="recon-cost">$${Math.round(cost).toLocaleString()}</span></td>
+      </tr>`;
+    });
+  });
+  document.getElementById('reconBody').innerHTML = rows || '<tr><td colspan="7" style="text-align:center;color:var(--muted2);padding:20px">No employees visible with current filter</td></tr>';
+
+  // Save actual hrs on change
+  document.querySelectorAll('.actual-input').forEach(inp => {
+    inp.addEventListener('change', () => {
+      localStorage.setItem('actual-'+inp.dataset.empid, inp.value);
+      renderRecon(getCurrentDates());
+      renderCostPanel(getCurrentDates());
+      updateMetricsBar(getCurrentDates());
+    });
+  });
+}
+
+// ─── SHIFT PICKER ─────────────────────────────────────────────────────────────
+function showPicker(x, y, ctx) {
+  pickerContext = ctx;
+  const picker = document.getElementById('shiftPicker');
+  // Update title
+  picker.querySelector('.picker-title').textContent = ctx.mode === 'change' ? 'Change / Remove' : 'Assign Shift';
+  picker.style.display = 'block';
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const pw = picker.offsetWidth, ph = picker.offsetHeight;
+  picker.style.left = Math.min(x, vw-pw-12)+'px';
+  picker.style.top  = Math.min(y, vh-ph-12)+'px';
+  picker.classList.add('open');
+}
+function closePicker() {
+  document.getElementById('shiftPicker').classList.remove('open');
+  pickerContext = null;
+}
+
+document.getElementById('shiftPicker').querySelectorAll('.picker-opt').forEach(opt => {
+  opt.addEventListener('click', () => {
+    if (!pickerContext) { closePicker(); return; }
+    const {dateStr:ds, unit, shiftKey, empId, mode} = pickerContext;
+
+    if (opt.dataset.shift === '__remove') {
+      // Remove from current cell
+      const arr = getCellEmps(ds, unit, shiftKey);
+      const idx = arr.indexOf(empId);
+      if (idx > -1) { arr.splice(idx, 1); saveSchedule(); renderAll(); }
+    } else if (mode === 'change') {
+      // Move to new shift type (same date, same unit)
+      const newShift = opt.dataset.shift;
+      if (newShift !== shiftKey) {
+        const oldArr = getCellEmps(ds, unit, shiftKey);
+        const idx = oldArr.indexOf(empId);
+        if (idx > -1) oldArr.splice(idx, 1);
+        const newArr = getCellEmps(ds, unit, newShift);
+        if (!newArr.includes(empId)) newArr.push(empId);
+        saveSchedule(); renderAll();
+      }
+    }
+    closePicker();
+  });
+});
+document.addEventListener('click', e => {
+  const picker = document.getElementById('shiftPicker');
+  if (picker.classList.contains('open') && !picker.contains(e.target)) closePicker();
+});
+
+// ─── TOAST ───────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  let t = document.getElementById('arc-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'arc-toast';
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a2620;color:#e8e2da;padding:8px 16px;border-radius:8px;font-size:12px;z-index:700;box-shadow:0 4px 16px rgba(0,0,0,.3);pointer-events:none;transition:opacity .2s;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.opacity = '0'; }, 2200);
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────────────────────────
+document.getElementById('prevWeek').addEventListener('click', () => {
+  if (VIEW === 'month') WEEK_START = new Date(WEEK_START.getFullYear(), WEEK_START.getMonth()-1, 1);
+  else WEEK_START = addDays(WEEK_START, -7);
+  renderAll();
+});
+document.getElementById('nextWeek').addEventListener('click', () => {
+  if (VIEW === 'month') WEEK_START = new Date(WEEK_START.getFullYear(), WEEK_START.getMonth()+1, 1);
+  else WEEK_START = addDays(WEEK_START, 7);
+  renderAll();
+});
+
+// ─── VIEW TOGGLES ─────────────────────────────────────────────────────────────
+document.querySelectorAll('.seg-btn[data-view]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    VIEW = btn.dataset.view;
+    document.querySelectorAll('.seg-btn[data-view]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (VIEW === 'payperiod') WEEK_START = getPayPeriodStart(WEEK_START);
+    else if (VIEW === 'week') WEEK_START = getWeekStart(WEEK_START);
+    else if (VIEW === 'month') WEEK_START = getMonthStart(WEEK_START);
+    renderAll();
+  });
+});
+
+document.querySelectorAll('.unit-btn[data-u]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    UNIT = btn.dataset.u;
+    document.querySelectorAll('.unit-btn[data-u]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderAll();
+  });
+});
+
+// ─── SIDEBAR COLLAPSE ─────────────────────────────────────────────────────────
+document.getElementById('collapseBtn').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('collapsed');
+  document.getElementById('mainContent').classList.toggle('expanded');
+});
+
+// ─── DARK MODE ────────────────────────────────────────────────────────────────
+const html = document.documentElement;
+const saved = localStorage.getItem('arc-theme') || 'light';
+html.setAttribute('data-theme', saved);
+updateDarkIcon();
+document.getElementById('darkToggle').addEventListener('click', () => {
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('arc-theme', next);
+  updateDarkIcon();
+});
+function updateDarkIcon() {
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  document.getElementById('darkIcon').innerHTML = isDark
+    ? '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
+    : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+}
+
+// ─── CLOCK ───────────────────────────────────────────────────────────────────
+function tick() {
+  const n = new Date();
+  document.getElementById('clock').textContent = n.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
+  document.getElementById('footerDate').textContent = n.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+}
+tick(); setInterval(tick, 1000);
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+renderAll();
+</script>
+</body>
+</html>
